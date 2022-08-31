@@ -1,5 +1,4 @@
 import System.Environment
-import Data.List
 import Data.Map
 
 -- Counting DNA Nucleotides
