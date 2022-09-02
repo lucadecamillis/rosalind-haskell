@@ -1,7 +1,8 @@
 import Data.List
 
 motif :: [Char] -> [Char] -> [Int]
-motif s t = (t `isPrefixOf`) `findIndices` tails s
+motif s t = [e + 1 | e <- r]
+    where r = (t `isPrefixOf`) `findIndices` tails s
 
 main :: IO ()
 main = do
