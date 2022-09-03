@@ -1,0 +1,3 @@
+cradle:
+  direct:
+    arguments: [-icommon] # include common folder for all files
