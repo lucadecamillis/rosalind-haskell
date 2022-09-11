@@ -1,7 +1,6 @@
 import Common
 import Data.List
 import Data.Ord
-import Data.Text.Encoding
 import qualified Data.ByteString.Char8 as C
 
 alphabet = ['A', 'C', 'G', 'T']
@@ -21,13 +20,21 @@ computeConsensus :: [[Int]] -> [Int]
 computeConsensus p = [ snd (getMax e) | e <- p ]
     where getMax a = maximumBy (comparing fst) (zip a [0..])
 
+printProfile :: [[Int]] -> [String]
+printProfile p = [ printLine e | e <- nameProfile p ]
+    where
+        nameProfile = zip alphabet
+        printLine (name, items) = name : ": " ++ unwords [ show e | e <- items ]
+
 main :: IO ()
 main = do
-    let file = "/home/luca/Desktop/consensus.txt"
-    fasta <- C.readFile file
+    let input = "/home/luca/Desktop/rosalind_cons.txt"
+    let output = "/home/luca/Desktop/rosalind_cons_res.txt"
+    fasta <- C.readFile input
     let lines = parseFastaMultiline fasta
     let matrix = parseLines lines
     let profile = computeProfile $ transpose matrix
     let consensus = [ alphabet !! e | e <- computeConsensus $ transpose profile ]
-    printMatrix profile
-    print (intersperse ' ' consensus)
+    let result = consensus : printProfile profile
+    C.writeFile output (C.pack (unlines result))
+    print result
