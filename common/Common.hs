@@ -6,3 +6,6 @@ import qualified Data.ByteString.Char8 as C
 parseFastaMultiline :: C.ByteString -> [(C.ByteString, C.ByteString)]
 parseFastaMultiline f = zip (map (C.takeWhile (/='\n')) xs) (map (C.filter (/='\n') . C.dropWhile (/='\n')) xs)
     where xs = filter (\x -> C.length x > 0) . C.split '>' $ f
+
+printMatrix :: (Foldable t, Show a) => t[a] -> IO()
+printMatrix = mapM_ ((putStrLn . unwords) . map show)

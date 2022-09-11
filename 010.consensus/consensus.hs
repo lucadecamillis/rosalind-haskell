@@ -3,12 +3,14 @@ import Data.List
 import Data.Text.Encoding
 import qualified Data.ByteString.Char8 as C
 
+alphabet = ['A', 'C', 'G', 'T']
+
 parseLines :: [(C.ByteString, C.ByteString)] -> [[Char]]
 parseLines l = [ [ x | x <- y ] | y <- r ]
     where r = [ C.unpack (snd e) | e <- l ]
 
-computeProfile :: [[Char]] -> [(Char, [Int])]
-computeProfile m = [ (s, countOccurence s m) | s <- ['A', 'C', 'G', 'T'] ]
+computeProfile :: [[Char]] -> [[Int]]
+computeProfile m = [ countOccurence s m | s <- alphabet ]
 
 countOccurence :: Char -> [[Char]] -> [Int]
 countOccurence s m = [ aggregate row | row <- m ]
@@ -21,4 +23,4 @@ main = do
     let lines = parseFastaMultiline fasta
     let matrix = parseLines lines
     let profile = computeProfile $ transpose matrix
-    print profile
+    printMatrix profile
