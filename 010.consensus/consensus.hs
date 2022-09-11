@@ -1,13 +1,8 @@
 import Common
 import Data.List
 import Data.Ord
-import qualified Data.ByteString.Char8 as C
 
 alphabet = ['A', 'C', 'G', 'T']
-
-parseLines :: [(C.ByteString, C.ByteString)] -> [[Char]]
-parseLines l = [ [ x | x <- y ] | y <- r ]
-    where r = [ C.unpack (snd e) | e <- l ]
 
 computeProfile :: [[Char]] -> [[Int]]
 computeProfile m = [ countOccurence s m | s <- alphabet ]
@@ -28,13 +23,11 @@ printProfile p = [ printLine e | e <- nameProfile p ]
 
 main :: IO ()
 main = do
-    let input = "/home/luca/Desktop/rosalind_cons.txt"
-    let output = "/home/luca/Desktop/rosalind_cons_res.txt"
-    fasta <- C.readFile input
-    let lines = parseFastaMultiline fasta
-    let matrix = parseLines lines
-    let profile = computeProfile $ transpose matrix
+    let input = "/home/luca/Desktop/consensus.txt"
+    let output = "/home/luca/Desktop/consensus_res.txt"
+    lines <- readFastaMultiline input
+    let profile = computeProfile $ transpose (fastaData lines)
     let consensus = [ alphabet !! e | e <- computeConsensus $ transpose profile ]
     let result = consensus : printProfile profile
-    C.writeFile output (C.pack (unlines result))
+    writeLines output result
     print result
