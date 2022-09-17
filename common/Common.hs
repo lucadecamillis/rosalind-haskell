@@ -1,6 +1,8 @@
 module Common where
 
 import qualified Data.ByteString.Char8 as C
+import qualified Data.Bifunctor
+import Text.Read (Lexeme(Char))
 
 -- |Read 'fasta' file data into a 2 column data structure.
 -- The second column contains the actual data
@@ -18,9 +20,14 @@ parseFastaMultiline f = zip (map (C.takeWhile (/='\n')) xs) (map (C.filter (/='\
     where xs = filter (\x -> C.length x > 0) . C.split '>' $ f
 
 -- |Extract the 'fasta' data from the given 2 columns multiline array
-fastaData :: [(C.ByteString, C.ByteString)] -> [[Char]]
-fastaData l = [ [ x | x <- y ] | y <- r ]
+fastaSnd :: [(C.ByteString, C.ByteString)] -> [[Char]]
+fastaSnd l = [ [ x | x <- y ] | y <- r ]
     where r = [ C.unpack (snd e) | e <- l ]
+
+-- |Extract the two columns from the given array data
+fastaTuples :: [(C.ByteString, C.ByteString)] -> [([Char], [Char])]
+fastaTuples l = [ toTuple e | e <- l ]
+    where toTuple (a1, a2) = (C.unpack a1, C.unpack a2)
 
 printMatrix :: (Foldable t, Show a) => t[a] -> IO()
 printMatrix = mapM_ ((putStrLn . unwords) . map show)

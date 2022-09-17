@@ -26,7 +26,7 @@ main = do
     let input = "/home/luca/Desktop/consensus.txt"
     let output = "/home/luca/Desktop/consensus_res.txt"
     lines <- readFastaMultiline input
-    let profile = computeProfile $ transpose (fastaData lines)
+    let profile = computeProfile $ transpose (fastaSnd lines)
     let consensus = [ alphabet !! e | e <- computeConsensus $ transpose profile ]
     let result = consensus : printProfile profile
     writeLines output result
