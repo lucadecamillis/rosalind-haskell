@@ -3,7 +3,10 @@ import Data.List
 import Data.Ord
 
 computeGC :: [Char] -> Double
-computeGC e = fromIntegral (length $ filter (\x -> x == 'C' || x == 'G') e) * 100 / fromIntegral (length e)
+computeGC e = 100.0 * fromIntegral (content e) / fromIntegral (length e)
+    where
+        content = length . filter cORg
+        cORg x = x == 'C' || x == 'G'
 
 computeMaxGC :: [([Char], [Char])] -> ([Char], Double)
 computeMaxGC l = maximumBy (comparing snd) [(t, computeGC e) | (t, e) <- l]
