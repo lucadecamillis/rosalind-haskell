@@ -14,6 +14,6 @@ computeMaxGC l = maximumBy (comparing snd) [(t, computeGC e) | (t, e) <- l]
 main :: IO ()
 main = do
     let input = "/home/luca/Desktop/rosalind_gc.txt"
-    lines <- fastaTuples <$> readFastaMultiline input
+    lines <- fastaTuples <$> readFastaLines input
     let maxGC = computeMaxGC lines
     print maxGC

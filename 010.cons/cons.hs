@@ -25,7 +25,7 @@ main :: IO ()
 main = do
     let input = "/home/luca/Desktop/consensus.txt"
     let output = "/home/luca/Desktop/consensus_res.txt"
-    lines <- readFastaMultiline input
+    lines <- readFastaLines input
     let profile = computeProfile $ transpose (fastaSnd lines)
     let consensus = [ alphabet !! e | e <- computeConsensus $ transpose profile ]
     let result = consensus : printProfile profile

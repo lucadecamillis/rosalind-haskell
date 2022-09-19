@@ -11,7 +11,7 @@ main :: IO ()
 main = do
     let input = "/home/luca/Desktop/grph.txt"
     let output = "/home/luca/Desktop/grph_res.txt"
-    lines <- fastaTuples <$> readFastaMultiline input
+    lines <- fastaTuples <$> readFastaLines input
     let adjacencyList = computeAdjacencyList 3 lines
     writeLines output [ unwords [ e1, e2 ] | (e1, e2) <- adjacencyList ]
     print adjacencyList
