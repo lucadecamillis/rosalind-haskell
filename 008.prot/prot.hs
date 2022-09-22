@@ -10,12 +10,14 @@ main = do
   let input = "/home/luca/Desktop/prot.txt"
   let output = "/home/luca/Desktop/prot_res.txt"
   lines <- readLines input
-  let rna = translate (head lines)
+  let rna = case length lines of
+        1 -> translate (head lines)
+        _ -> Left "Wrong number of lines"
   case rna of
     Left err -> print err
     Right r -> writeLines output [concatMap show r]
 
-data AminoAcid = A | R | N | D | C | Q | E | G | H | I | L | K | M | F | P | S | T | W | Y | V | Stop deriving(Show)
+data AminoAcid = A | R | N | D | C | Q | E | G | H | I | L | K | M | F | P | S | T | W | Y | V | Stop deriving (Show)
 
 rnaCodonTable e = case e of
   "UUU" -> Right F
