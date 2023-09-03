@@ -1,13 +1,9 @@
 fact n
-    | n == 0 = 1
-    | otherwise = n * fact (n - 1)
+  | n == 0 = 1
+  | otherwise = n * fact (n - 1)
 
-binomialCoeff n k = fact n `div` (fact k * fact (n - k))
+binomialCoeff n x = fact n / (fact x * fact (n - x))
 
-choose n 1 = n
-choose n k
-    | k > n     = -1
-    | k > n - k = choose n  (n - k)
-    | otherwise = (choose n (k - 1) * (n - k + 1)) `div` k
+prob n x = binomialCoeff n x * (0.25 ** x) * (0.75 ** (n - x))
 
-pmf k n p = fromIntegral (binomialCoeff n k) * (p^k) * ((1-p)^(n-k))
+lia k n = 1 - sum [prob (2**k) i | i <- [0 .. (n-1)]]
