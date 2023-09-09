@@ -1,49 +1,34 @@
 import Common
-import Network.HTTP.Client as HTTP
-import Network.HTTP.Client.TLS as TLS
-import Network.HTTP.Request as R
-import Data.ByteString.Lazy as L
-import Data.ByteString.Char8 as C
-import qualified Codec.Binary.UTF8.Generic as U
-
-downloadViaRequest :: [Char] -> IO [Char]
-downloadViaRequest url = do
-    resp <- get url
-    let body = R.responseBody resp
-    let hh = R.responseHeaders resp
-    let l = C.length body
-    print l
-    print hh
-    let strCnt = U.toString body
-    return strCnt
-
-downloadViaHttp :: [Char] -> IO [Char]
-downloadViaHttp url = do
-    request <- parseRequest ("GET " ++ url)
-    manager <- newManager tlsManagerSettings
-    response <- httpLbs request manager
-    let body = HTTP.responseBody response
-    let hh = HTTP.responseHeaders response
-    let l = L.length body
-    print l
-    print hh
-    let strCnt = U.toString body
-    return strCnt
+import Https
+import Data.ByteString as B
+import Codec.Binary.UTF8.Generic as U
 
 downloadProtein :: [Char] -> IO [Char]
 downloadProtein id = do
-    let url = "https://rest.uniprot.org/uniprotkb/" ++ id ++ ".fasta"
-    --let url = "https://api.leancloud.cn/1.1/date"
-    --let url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/ChangeLog-6.5.2"
-    print url
-    strCnt1 <- downloadViaHttp url
-    strCnt2 <- downloadViaRequest url
-    --let content = U.toString body
+    httpResult <- getViaRequest $ getFastaUrl id
+    let content = U.toString $ fst httpResult
     --let content = fastaSnd $ parseFastaLines $ responseBody resp
-    return strCnt1
+    return content
+
+getFastaUrl :: [Char] -> [Char]
+getFastaUrl id = "https://rest.uniprot.org/uniprotkb/" ++ id ++ ".fasta"
+
+getDownloadPath :: [Char] -> [Char] -> [Char]
+getDownloadPath id tt = "/home/luca/Desktop/" ++ id ++ ".HS." ++ tt ++ ".fasta"
+
+diagHttps :: [Char] -> [Char] -> ([Char] -> IO (ByteString, Int)) -> IO ()
+diagHttps id tt f = do
+    httpResult <- f $ getFastaUrl id
+    print ("Http download (" ++ tt ++ "), nr bytes " ++ show (snd httpResult) ++ " writing to file")
+    let filePath = getDownloadPath id tt
+    B.writeFile filePath (fst httpResult)
 
 main :: IO ()
 main = do
-    --body <- downloadProtein "B5ZC00"
-    body <- downloadProtein "P05067"
-    print body
+    --let id = "P05067"
+    let id = "B5ZC00"
+    diagHttps id "snoyberg" getViaSnoyberg
+    diagHttps id "request" getViaRequest
+    diagHttps id "aesiniath" getViaAesiniath
+    --body <- downloadProtein id
+    --print body
