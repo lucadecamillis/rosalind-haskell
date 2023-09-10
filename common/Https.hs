@@ -7,6 +7,8 @@ import Data.ByteString.Lazy as L
 import Data.ByteString.Char8 as C
 import Network.Http.Client as AES
 import Data.ByteString as B
+import Network.HTTP.Simple as S
+import qualified Network.HTTP.Types as H
 
 getViaAesiniath ::[Char] -> IO (B.ByteString, Int)
 getViaAesiniath url = do
@@ -25,10 +27,19 @@ getViaRequest url = do
 
 getViaSnoyberg :: [Char] -> IO (B.ByteString, Int)
 getViaSnoyberg url = do
-    request <- parseRequest ("GET " ++ url)
+    request <- HTTP.parseRequest ("GET " ++ url)
     manager <- newManager tlsManagerSettings
-    response <- httpLbs request manager
+    response <- HTTP.httpLbs request manager
     let body = HTTP.responseBody response
     let hh = HTTP.responseHeaders response
     let l = L.length body
     return (L.toStrict body, fromIntegral l)
+
+getViaConduit :: [Char] -> IO (B.ByteString, Int)
+getViaConduit url = do
+    request <- S.parseRequest url
+    let requestWithHeaders = S.addRequestHeader H.hUserAgent (C.pack "YourAppName/1.0") request
+    response <- S.httpBS request
+    let body = getResponseBody response
+    let l = C.length body
+    return (body, l)

@@ -30,5 +30,6 @@ main = do
     diagHttps id "snoyberg" getViaSnoyberg
     diagHttps id "request" getViaRequest
     diagHttps id "aesiniath" getViaAesiniath
+    diagHttps id "conduit" getViaConduit
     --body <- downloadProtein id
     --print body
