@@ -44,3 +44,8 @@ splitEvery _ [] = []
 splitEvery n list = first : splitEvery n rest
   where
     (first, rest) = splitAt n list
+
+-- | Get uniprot fasta URL given the protein ID
+getFastaUrl :: [Char] -> [Char]
+--getFastaUrl id = "https://www.uniprot.org/uniprot/" ++ id ++ ".fasta"
+getFastaUrl id = "https://www.ebi.ac.uk/proteins/api/proteins/" ++ id ++ ".fasta"
