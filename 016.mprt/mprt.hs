@@ -1,17 +1,36 @@
-import Codec.Binary.UTF8.Generic as U
 import Common
-import Data.ByteString as B
 import Https
+import Text.Regex.TDFA
 
-downloadProtein :: [Char] -> IO [[Char]]
+purifyId :: [Char] -> Maybe [Char]
+purifyId id = if null parts then Nothing else Just (head parts)
+  where
+    parts = wordsWhen (== '_') id
+
+downloadProtein :: [Char] -> IO (Maybe [Char])
 downloadProtein id = do
-  httpResult <- getViaRequest $ getFastaUrl id
-  --let content = U.toString $ fst httpResult
-  let content = fastaSnd $ parseFastaLines $ fst httpResult
-  return content
+  case purifyId id of
+    Nothing -> return Nothing
+    Just innerId -> do
+      httpResult <- getViaRequest $ getFastaUrl innerId
+      let content = fastaSnd $ parseFastaLines $ fst httpResult
+      let result = if null content then Nothing else emptyList (head content)
+      return result
+
+findMotif :: [Char] -> [Int]
+findMotif p = do
+  let matches = getAllMatches (p =~ "REGEX") :: [(Int, Int)]
+  fst <$> matches 
+
+findMotifIO :: [Char] -> IO ([Char], [Int])
+findMotifIO id = do
+  protein <- downloadProtein id
+  let occurrences = maybeGetValueOrDefault (findMotif <$> protein) []
+  return (id, occurrences)
 
 main :: IO ()
 main = do
-    let id = "B5ZC00"
-    body <- downloadProtein id
-    print body
+  input <- getDesktopPath "016.mprt.txt"
+  lines <- readLines input
+  result <- mapM findMotifIO lines
+  print result

@@ -2,6 +2,8 @@ module Common where
 
 import qualified Data.Bifunctor
 import qualified Data.ByteString.Char8 as C
+import System.Directory as D
+import System.FilePath
 import Text.Read (Lexeme (Char))
 
 -- | Read lines in the given file
@@ -49,3 +51,23 @@ splitEvery n list = first : splitEvery n rest
 getFastaUrl :: [Char] -> [Char]
 --getFastaUrl id = "https://www.uniprot.org/uniprot/" ++ id ++ ".fasta"
 getFastaUrl id = "https://www.ebi.ac.uk/proteins/api/proteins/" ++ id ++ ".fasta"
+
+-- | Return the path of a file within the user's desktop
+getDesktopPath :: [Char] -> IO FilePath
+getDesktopPath subPath = do
+  homeDir <- D.getHomeDirectory
+  return (homeDir </> "Desktop" </> subPath)
+
+wordsWhen :: (Char -> Bool) -> String -> [String]
+wordsWhen p s = case dropWhile p s of
+  "" -> []
+  s' -> w : wordsWhen p s''
+    where
+      (w, s'') = break p s'
+
+emptyList :: [a] -> Maybe [a]
+emptyList l = if null l then Nothing else Just l
+
+maybeGetValueOrDefault :: Maybe a -> a -> a
+maybeGetValueOrDefault (Just x) _ = x
+maybeGetValueOrDefault Nothing  defaultValue = defaultValue
