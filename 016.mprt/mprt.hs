@@ -1,6 +1,6 @@
 import Common
 import Https
-import Text.Regex.TDFA
+import Text.Regex.PCRE
 import Data.List
 
 purifyId :: [Char] -> Maybe [Char]
@@ -20,7 +20,7 @@ downloadProtein id = do
 
 findMotif :: [Char] -> [Int]
 findMotif p = do
-  let matches = getAllMatches (p =~ "N[^P]{1}[S|T]{1}[^P]{1}") :: [(Int, Int)]
+  let matches = getAllMatches (p =~ "(?=(N[^P]{1}[S|T]{1}[^P]{1}))([A-Z]{1})") :: [(Int, Int)]
   (+1) . fst <$> matches -- +1 here because regex find indices while we want char count
 
 findMotifIO :: [Char] -> IO ([Char], [Int])
