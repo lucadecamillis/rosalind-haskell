@@ -14,6 +14,7 @@ downloadProtein id = do
     Nothing -> return Nothing
     Just innerId -> do
       httpResult <- getViaRequest $ getFastaUrl innerId
+      print ("Downloaded protein " ++ id ++ " size: " ++ show (snd httpResult))
       let content = fastaSnd $ parseFastaLines $ fst httpResult
       let result = if null content then Nothing else emptyList (head content)
       return result
