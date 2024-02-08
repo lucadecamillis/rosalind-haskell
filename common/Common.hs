@@ -70,4 +70,8 @@ emptyList l = if null l then Nothing else Just l
 
 maybeGetValueOrDefault :: Maybe a -> a -> a
 maybeGetValueOrDefault (Just x) _ = x
-maybeGetValueOrDefault Nothing  defaultValue = defaultValue
+maybeGetValueOrDefault Nothing defaultValue = defaultValue
+
+note :: Maybe a -> e -> Either e a
+note Nothing e = Left e
+note (Just a) _ = Right a
